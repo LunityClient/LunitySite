@@ -20,46 +20,12 @@
         crossorigin="anonymous"></script>
     <!-- External jQuery link -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Anime.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/4.1.1/anime.min.js"></script>
-    <!-- CSS Animation.io library -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yesiamrocks/cssanimation.io@1.0.3/cssanimation.min.css">
     <!-- Favicon -->
     <link rel="icon" type="image/ico" href="favicon.ico">
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Additional styles */
-        .video-container {
-            position: relative;
-            padding-bottom: 53.25%; /* 16:9 aspect ratio */
-            padding-top: 100px;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
         /* Your existing styles */
         .ly-secondary {
             background-color: #121212;
-            color: #fff;
         }
 
         .ly-dark {
@@ -87,17 +53,78 @@
             padding-bottom: 10px;
         }
 
+        .animated-text {
+            animation: fadeInUp 2s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .card-no-bg {
             background-color: transparent;
             border: none;
         }
-        
-        .navbar-nav .active > .nav-link {
-            color: #fff; 
+
+        /* New styles */
+        .module-button {
+            background-color: transparent;
+            color: rgb(234, 127, 127);
+            border: 1px solid rgb(209, 87, 87);
+            margin-top: 10px; /* Add margin to the top */
+        }
+
+        .module-list {
+            display: none; /* Initially hide the module list */
+            position: absolute;
+            background-color: rgb(0, 0, 0); /* Set background color to transparent black */
+            transition: max-height 0.5s ease; /* Add transition for expanding/collapsing */
+            list-style: none; /* Remove default list styles */
+            padding-left: 0; /* Remove default padding */
+            margin-top: 30px; /* Add margin to the top */
+            left: 0; /* Align to the left */
+            width: 100%; /* Make it full width */
+            text-align: center; /* Center-align the text */
+            z-index: 1; /* Ensure it's above other elements */
+        }
+
+        .module-list.active {
+            display: block; /* Show the module list when active */
+            overflow-y: auto; /* Add scrolling if content exceeds max height */
+        }
+
+        .module-list li {
+            color: rgb(109, 39, 39);
+            padding: 10px;
+        }
+
+        .module-list li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
     </style>
-    
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var images = ['doofen.gif', 'leDance.gif', 'spongeman.gif', 'fire.gif'];
+            document.getElementsByClassName('epicBackground')[0].style.backgroundImage = 'url(' + images[Math.floor(Math.random() * images.length)] + ')';
+        });
+
+        $(document).ready(function(){
+            // Slowly toggle visibility of modules when clicking on the button
+            $('.module-button').click(function(){
+                $(this).next('.module-list').slideToggle('slow');
+            });
+        });
+    </script>
 </head>
+
 <body class="text-light ly-secondary epicBackground">
     <nav class="navbar sticky-top navbar-expand-lg navbar-dark ly-nav-dark shadow-sm p-3 mb-5">
         <a class="navbar-brand" href="">Nuvola<span class="badge badge-light">Beta</span></a>
@@ -107,34 +134,42 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav mr-auto">
+
                 <li class="nav-item">
                     <a class="nav-link" href="index.html">Home</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href="instruction.html">Instructions</a>
+                    <a class="nav-link" href="#Instructions">Instructions</a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="home.html#Download">Download</a>
                 </li>
+                
+                
             </ul>
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="javascript:void(0);" onclick="toggleDarkMode()">Dark/Light Mode</a>
-                </li>
-
                 <li class="nav-item">
                     <a class="nav-link" href="https://discord.gg/xgBsdSZNB7">Discord</a>
                 </li>
             </ul>
         </div>
     </nav>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/jaw_wp1Qqow" frameborder="0" allowfullscreen = true></iframe>
-                </div>
-            </div>
+    
+    <div id="Instructions" class="jumbotron ly-dark Download">
+        <h1 class="display-3 text-center">Instructions</h1>
+        <h5 class="display-5 text-center animated-text">You can either use <a
+                href="https://github.com/fligger/FateInjector/releases/download/1.0/FateInjector.exe">Fate
+                Injector</a> or <a href="https://github.com/JiayiSoftware/JiayiLauncher/releases">Jiayi Launcher</a>.
+        </h5>
+        <div class="text-center">
+            <button class="btn btn-primary module-button">Show Modules</button>
+            <ul class="list-group module-list">
+                <li class="list-group-item">KillAura</li>
+                <li class="list-group-item">Disabler</li>
+                <li class="list-group-item">Discord chat</li>
+            </ul>
         </div>
     </div>
     <script>
@@ -142,11 +177,13 @@
             var currentLocation = window.location.href;
             $('.navbar-nav a').each(function(){
                 var href = $(this).attr('href');
-                if(currentLocation.indexOf(href) !== -1){
+                if(currentLocation.indexOf(href) !== -1 || href === "#Instructions"){
                     $(this).addClass('active');
                 }
             });
         });
     </script>
+    
 </body>
+
 </html>
