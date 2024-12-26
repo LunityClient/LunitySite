@@ -14,7 +14,8 @@ function App() {
             title: 'Home',
             content: 'Every Keeper is born, endowed with attributes from a collection of over 400 meticulously hand-painted assets.',
             color: 'bg-indigo-500',
-            layout: 'wideLeft'
+            layout: 'wideLeft',
+            accentColor: 'from-violet-500 via-purple-500 to-fuchsia-500'
         },
         {
             id: 'instructions',
@@ -22,7 +23,8 @@ function App() {
             title: 'INSTRUCTIONS FOR THE FUTURE',
             content: 'Follow these steps to join our community and become part of the next generation.',
             color: 'bg-indigo-600',
-            layout: 'centered'
+            layout: 'centered',
+            accentColor: 'from-cyan-500 via-blue-500 to-indigo-500'
         },
         {
             id: 'download',
@@ -30,11 +32,14 @@ function App() {
             title: 'GET STARTED NOW',
             content: 'Download our latest release and begin your journey.',
             color: 'bg-indigo-700',
-            layout: 'wideRight'
+            layout: 'wideRight',
+            accentColor: 'from-emerald-500 via-teal-500 to-cyan-500'
         }
     ];
 
-    const tools = sections.map(({ id, label }) => ({ id, label }));
+    const tools = sections.map(({ id, label, accentColor }) => ({ id, label, accentColor }));
+
+    const getCurrentSection = () => sections.find(section => section.id === currentTool) || sections[0];
 
     React.useEffect(() => {
         const sectionEls = document.querySelectorAll('section[id]');
@@ -106,29 +111,42 @@ function App() {
             <Dropdown isOpen={isMenuOpen} />
             
             <div className="fixed top-0 left-0 right-0 flex justify-center p-4 z-30 toolbar-nav">
-                <div className="relative inline-flex items-center rounded-full p-2 bg-gray-900/20 backdrop-blur-sm">
-                    {tools.map((tool) => (
-                        <button
-                            key={tool.id}
-                            className={`relative flex items-center justify-center w-16 h-16 rounded-full transition-all duration-300 mx-1
-                                ${tool.id === currentTool 
-                                    ? 'bg-gray-800/30 shadow-lg shadow-gray-900/30' 
-                                    : 'hover:bg-gray-800/20'}`}
-                            onClick={() => scrollToSection(tool.id)}
-                        >
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/5 to-transparent" />
-                            <span className="relative text-white text-xl font-medium">
-                                {tool.label[0]}
-                            </span>
-                            <span className="absolute top-full mt-3 text-sm bg-black/80 text-white px-4 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
-                                {tool.label}
-                            </span>
-                        </button>
-                    ))}
-                    <div 
-                        ref={highlightRef}
-                        className="absolute top-2 left-2 w-16 h-16 bg-white rounded-full mix-blend-difference pointer-events-none transition-transform duration-500 ease-out shadow-xl shadow-white/10"
-                    />
+                <div className="relative bg-indigo-600/90 backdrop-blur-sm rounded-full px-2">
+                    <div className="relative flex items-center h-12">
+                        {/* White circle indicator */}
+                        <div 
+                            ref={highlightRef}
+                            className="absolute w-10 h-10 bg-white rounded-full 
+                                transition-all duration-500 ease-out"
+                            style={{
+                                left: '4px',
+                                transform: `translateX(${tools.findIndex(t => t.id === currentTool) * 40}px)`
+                            }}
+                        />
+                        
+                        {/* Navigation buttons */}
+                        {tools.map((tool) => (
+                            <button
+                                key={tool.id}
+                                onClick={() => scrollToSection(tool.id)}
+                                className="relative z-10 w-10 h-10 flex items-center justify-center"
+                            >
+                                <span className={`font-medium transition-all duration-300 ${
+                                    tool.id === currentTool 
+                                        ? 'text-indigo-900 text-lg' 
+                                        : 'text-white/90 text-base hover:text-white'
+                                }`}>
+                                    {tool.label[0]}
+                                </span>
+                                <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 
+                                    text-sm bg-black/80 text-white px-3 py-1 rounded 
+                                    opacity-0 pointer-events-none group-hover:opacity-100 
+                                    transition-opacity whitespace-nowrap">
+                                    {tool.label}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
             
