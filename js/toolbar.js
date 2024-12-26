@@ -111,41 +111,38 @@ function App() {
             <Dropdown isOpen={isMenuOpen} />
             
             <div className="fixed top-0 left-0 right-0 flex justify-center p-4 z-30 toolbar-nav">
-                <div className="relative bg-indigo-600/90 backdrop-blur-sm rounded-full px-2">
-                    <div className="relative flex items-center h-12">
-                        {/* White circle indicator */}
-                        <div 
-                            ref={highlightRef}
-                            className="absolute w-10 h-10 bg-white rounded-full 
-                                transition-all duration-500 ease-out"
-                            style={{
-                                left: '4px',
-                                transform: `translateX(${tools.findIndex(t => t.id === currentTool) * 40}px)`
-                            }}
-                        />
-                        
-                        {/* Navigation buttons */}
-                        {tools.map((tool) => (
+                <div className="relative bg-indigo-600 rounded-full px-3 py-2 min-w-[180px]">
+                    {/* Container for buttons with proper spacing */}
+                    <div className="relative flex items-center justify-between">
+                        {tools.map((tool, index) => (
                             <button
                                 key={tool.id}
                                 onClick={() => scrollToSection(tool.id)}
-                                className="relative z-10 w-10 h-10 flex items-center justify-center"
+                                className="relative z-10 w-10 h-10 flex items-center justify-center group"
                             >
-                                <span className={`font-medium transition-all duration-300 ${
+                                <span className={`text-xl font-medium transition-colors duration-300 ${
                                     tool.id === currentTool 
-                                        ? 'text-indigo-900 text-lg' 
-                                        : 'text-white/90 text-base hover:text-white'
+                                        ? 'text-indigo-900'
+                                        : 'text-white'
                                 }`}>
                                     {tool.label[0]}
                                 </span>
                                 <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 
-                                    text-sm bg-black/80 text-white px-3 py-1 rounded 
-                                    opacity-0 pointer-events-none group-hover:opacity-100 
-                                    transition-opacity whitespace-nowrap">
+                                    text-sm bg-black/80 text-white px-3 py-1 rounded-lg 
+                                    opacity-0 group-hover:opacity-100 transition-opacity">
                                     {tool.label}
                                 </span>
                             </button>
                         ))}
+                        
+                        {/* Sliding indicator */}
+                        <div 
+                            className="absolute top-0 left-0 w-10 h-10 bg-white rounded-full 
+                                transition-transform duration-300 ease-in-out"
+                            style={{
+                                transform: `translateX(${tools.findIndex(t => t.id === currentTool) * 40}px)`
+                            }}
+                        />
                     </div>
                 </div>
             </div>
