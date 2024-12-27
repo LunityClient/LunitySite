@@ -96,7 +96,131 @@ function NotificationPopup({ isOpen, message }) {
         </div>
     );
 }
+function Sparkles({ isHovered }) {
+    const sparkleColors = ['#FF5F6D', '#FFC371', '#FFD700', '#FF69B4'];
+    return (
+        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-300 
+            ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+            {Array.from({ length: 20 }).map((_, i) => (
+                <div
+                    key={i}
+                    className="absolute animate-floating"
+                    style={{
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 2}s`,
+                        animationDuration: `${2 + Math.random() * 2}s`
+                    }}
+                >
+                    <div
+                        className="w-1.5 h-1.5 rounded-full animate-pulse"
+                        style={{
+                            backgroundColor: sparkleColors[Math.floor(Math.random() * sparkleColors.length)],
+                            animationDuration: `${0.5 + Math.random()}s`,
+                            filter: 'blur(0.5px)'
+                        }}
+                    />
+                </div>
+            ))}
+        </div>
+    );
+}
 
+function GlowingBorder({ isHovered }) {
+    return (
+        <div className={`absolute -inset-1 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 
+            rounded-2xl opacity-0 transition-opacity duration-300 blur-lg ${isHovered ? 'opacity-70' : ''}`} />
+    );
+}
+function FeaturedCreditCard({ member, onSelect }) {
+    const [isHovered, setIsHovered] = React.useState(false);
+    const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
+
+    const handleMouseMove = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setMousePosition({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        });
+    };
+
+    return (
+        <div 
+            className="relative w-full cursor-pointer transform transition-all duration-500"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onMouseMove={handleMouseMove}
+            onClick={() => onSelect(member)}
+        >
+            <GlowingBorder isHovered={isHovered} />
+            <Sparkles isHovered={isHovered} />
+            
+            <div 
+                className={`absolute pointer-events-none transition-opacity duration-300 ${
+                    isHovered ? 'opacity-50' : 'opacity-0'
+                }`}
+                style={{
+                    background: 'radial-gradient(circle 100px at center, rgba(255,255,255,0.1), transparent)',
+                    width: '200px',
+                    height: '200px',
+                    transform: `translate(${mousePosition.x - 100}px, ${mousePosition.y - 100}px)`,
+                    transition: 'transform 0.2s ease-out'
+                }}
+            />
+
+            <div className={`p-8 rounded-2xl bg-gray-800/50 backdrop-blur-lg transform transition-all duration-500 
+                relative overflow-hidden ${isHovered ? 'scale-[1.02] shadow-2xl' : 'scale-100'}`}>
+                <div className="relative z-10 flex items-center gap-6">
+                    <div className="relative group">
+                        <div className={`absolute -inset-1 rounded-full transition-all duration-300 ${
+                            isHovered ? 'blur-md bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500' : ''
+                        }`} />
+                        <div className="relative w-24 h-24 rounded-full overflow-hidden ring-2 ring-white/20">
+                            <img 
+                                src={member.icon} 
+                                alt={member.name}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 className="text-3xl font-bold">
+                            <span className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 
+                                bg-clip-text text-transparent">
+                                {member.name}
+                            </span>
+                        </h3>
+                        <p className="text-xl font-medium text-white/80 mt-2">{member.role}</p>
+                    </div>
+                </div>
+
+                <div className="mt-6">
+                    <p className="text-lg text-white/70 leading-relaxed">{member.description}</p>
+                    <div className="mt-6 space-y-2">
+                        {member.contributions.map((contribution, index) => (
+                            <div 
+                                key={index}
+                                className={`flex items-center gap-3 p-2 rounded-lg transition-all duration-300 ${
+                                    isHovered ? 'bg-white/5' : ''
+                                }`}
+                            >
+                                <div className={`w-5 h-5 rounded-full flex items-center justify-center 
+                                    ${isHovered ? 'bg-gradient-to-r from-pink-500 to-yellow-500' : 'bg-gray-700'}`}>
+                                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <span className="text-white/80">{contribution}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 function CreditsPage() {
     const [selectedMember, setSelectedMember] = React.useState(null);
     const [showNotification, setShowNotification] = React.useState(false);
@@ -109,6 +233,7 @@ function CreditsPage() {
     };
 
     const teamMembers = [
+        //do not touch this person below here she's belong to mine!!!
         {
             name: "Lê Thị Kim Xuyến",
             role: "Motivation",
@@ -118,8 +243,22 @@ function CreditsPage() {
                 "Tại vì thích:)",
                 "Nói chuyện mỗi ngày nên mát mát tẻn tẻn:>",
                 "Rảnh quá nên bỏ cho vui."
-            ]
+            ],
+            featured: true
         },
+        {
+            name: "Phạm Thị Ngọc Linh",
+            role: "Đệp nhất đời của tony",
+            description: "Nỗi nhớ mỗi ngày",
+            icon: "linh.jpg",
+            contributions: [
+                "Nhớ quá nên phải bỏ đó",
+                "Nói chuyện không nhiều nhưng thương nhất rồi",
+                "Bỏ hết để lo cho em"
+            ],
+            featured: true
+        },
+        // do not touc this person part above because she's mineee!!
         {
             name: "ASM/disabledmallis",
             role: "Lead Developer",
@@ -155,14 +294,43 @@ function CreditsPage() {
                 "Created documentation for modules",
                 "Collaborated on integration testing"
             ]
+        },
+        {
+            name: "Muffin/Múp phin",
+            role: "Người tịnh tâm",
+            description: "Chill guy trong chat",
+            icon: "mup.jpg",
+            contributions: [
+                "Người này đc rất nhiều gái theo",
+                "Chơi game rất hay",
+                "Có thể bị gay",
+                "3 ae đi phá server"
+            ]
+        },
+        {
+            name: "Kubi/Bii",
+            role: "Người vui vẻ:>",
+            description: "Rất vui khi được làm bạn",
+            icon: "khubi.jpg",
+            contributions: [
+                "Bỏ cho vui:)",
+                "hmmm chơi game rất hay",
+                "3 ae đi phá server",
+                "Bựa"
+            ]
         }
+        
     ];
+
+    const featuredMembers = teamMembers.filter(member => member.featured);
+    const regularMembers = teamMembers.filter(member => !member.featured);
 
     return (
         <div className="min-h-screen bg-gray-900 py-20 px-4">
             {/* Header Section */}
             <div className="text-center mb-20">
-                <h1 className="text-6xl font-bold bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent mb-6">
+                <h1 className="text-6xl font-bold bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 
+                    bg-clip-text text-transparent mb-6">
                     Meet Our Team
                 </h1>
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
@@ -170,25 +338,38 @@ function CreditsPage() {
                 </p>
             </div>
 
-            {/* Credits Grid */}
-            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 px-4">
-                {teamMembers.map((member, index) => (
+            {/* Featured Members Grid - Now side by side */}
+            <div className="mb-20 max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {featuredMembers.map((member, index) => (
+                        <div key={member.name} className="w-full">
+                            <FeaturedCreditCard 
+                                member={member}
+                                onSelect={setSelectedMember}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Regular Members Grid */}
+            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+                {regularMembers.map((member) => (
                     <CreditCard 
-                        key={index} 
+                        key={member.name}
                         member={member} 
                         onSelect={setSelectedMember}
                     />
                 ))}
             </div>
 
-            {/* Modal */}
+            {/* Modal and Notification components */}
             <Modal 
                 isOpen={selectedMember !== null}
                 onClose={() => setSelectedMember(null)}
                 member={selectedMember}
             />
 
-            {/* Notification Popup */}
             <NotificationPopup 
                 isOpen={showNotification} 
                 message="Redirecting to Nuvola Home Page..." 
@@ -202,7 +383,8 @@ function CreditsPage() {
                 <div className="mt-6">
                     <button 
                         onClick={handleReturn}
-                        className="px-8 py-3 rounded-full bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white font-medium hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300"
+                        className="px-8 py-3 rounded-full bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 
+                            text-white font-medium hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300"
                     >
                         Back to Home
                     </button>
@@ -211,6 +393,23 @@ function CreditsPage() {
         </div>
     );
 }
+const styles = `
+    @keyframes floating {
+        0% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(5px, -5px) scale(1.2); }
+        100% { transform: translate(0, 0) scale(1); }
+    }
+
+    .animate-floating {
+        animation: floating 3s ease-in-out infinite;
+    }
+`;
+
+// Add the styles to the document
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>

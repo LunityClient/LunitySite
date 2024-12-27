@@ -166,7 +166,7 @@ function HamburgerMenu({ isOpen, toggleMenu }) {
     );
 }
 
-function Dropdown({ isOpen }) {
+function Dropdown({ isOpen, sections }) {
     const [searchResults, setSearchResults] = React.useState([]);
     const [searchQuery, setSearchQuery] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
@@ -178,6 +178,23 @@ function Dropdown({ isOpen }) {
         }
     }, [isOpen]);
 
+    // Transform sections data into search results format
+    const transformSectionsToResults = (query) => {
+        return sections
+            .map((section, index) => ({
+                page: section.label,
+                lineNumber: (index + 1) * 8, // Generate consistent line numbers
+                preview: section.content,
+                context: section.title,
+                id: section.id
+            }))
+            .filter(result => 
+                result.preview.toLowerCase().includes(query.toLowerCase()) ||
+                result.page.toLowerCase().includes(query.toLowerCase()) ||
+                result.context.toLowerCase().includes(query.toLowerCase())
+            );
+    };
+
     const searchContent = (query) => {
         if (!query.trim()) {
             setSearchResults([]);
@@ -188,35 +205,19 @@ function Dropdown({ isOpen }) {
         setIsLoading(true);
         setSearchQuery(query);
 
-        // Optimize search delay
+        // Simulate search delay for smoother UX
         setTimeout(() => {
-            const results = [
-                {
-                    page: 'Home',
-                    lineNumber: 12,
-                    preview: 'Every Keeper is born, endowed with attributes from a collection of over 400 meticulously hand-painted assets.',
-                    context: 'Main Menu'
-                },
-                {
-                    page: 'Instructions',
-                    lineNumber: 24,
-                    preview: 'Follow these steps to join our community and become part of the next generation.',
-                    context: 'Instructions'
-                },
-                {
-                    page: 'Download',
-                    lineNumber: 8,
-                    preview: 'Download our latest release and begin your journey today.',
-                    context: 'Play Right Away'
-                }
-            ].filter(result => 
-                result.preview.toLowerCase().includes(query.toLowerCase()) ||
-                result.page.toLowerCase().includes(query.toLowerCase())
-            );
-
+            const results = transformSectionsToResults(query);
             setSearchResults(results);
             setIsLoading(false);
         }, 150);
+    };
+
+    const handleResultClick = (result) => {
+        const element = document.getElementById(result.id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
     };
 
     return (
@@ -250,12 +251,7 @@ function Dropdown({ isOpen }) {
                                             key={index}
                                             result={result}
                                             searchTerm={searchQuery}
-                                            onClick={() => {
-                                                const element = document.getElementById(result.page.toLowerCase());
-                                                if (element) {
-                                                    element.scrollIntoView({ behavior: 'smooth' });
-                                                }
-                                            }}
+                                            onClick={() => handleResultClick(result)}
                                         />
                                     ))}
                                 </div>

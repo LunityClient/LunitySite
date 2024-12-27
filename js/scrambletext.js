@@ -72,12 +72,12 @@ function ScrambleText({ text, progress }) {
     );
 }
 
-function Section({ id, title, content, color, layout = 'default' }) {
+function Section({ id, title, content, layout = 'default' }) {
     const [scrollProgress, setScrollProgress] = React.useState(0);
     const [isVisible, setIsVisible] = React.useState(false);
     const sectionRef = React.useRef(null);
 
-    // Layout variations
+    // Layout variations remain the same
     const layouts = {
         default: "grid grid-cols-2 gap-8",
         centered: "flex flex-col items-center text-center max-w-2xl mx-auto",
@@ -155,37 +155,77 @@ function Section({ id, title, content, color, layout = 'default' }) {
     }, []);
 
     const contentStyles = getContentStyles();
-
+    
     return (
         <section 
             ref={sectionRef}
             id={id} 
-            className={`min-h-screen flex items-center justify-center ${color} p-8 transition-colors duration-500 overflow-hidden`}
+            className="min-h-screen flex items-center justify-center relative bg-black overflow-hidden"
         >
-            <div className="max-w-6xl mx-auto w-full">
+            {/* Animated background effects */}
+            <div className="absolute inset-0 bg-black">
+                {/* Animated gradient line */}
+                <div className="absolute inset-0 opacity-20">
+                    <div className="absolute top-0 -left-1/4 w-[150%] h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent 
+                        animate-moveLeftRight" />
+                </div>
+                
+                {/* Glowing orbs */}
+                <div className="absolute inset-0 overflow-hidden">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                        <div
+                            key={i}
+                            className="absolute w-96 h-96 rounded-full opacity-30 animate-float"
+                            style={{
+                                background: `radial-gradient(circle, ${
+                                    ['rgba(59,130,246,0.2)', 'rgba(147,51,234,0.2)', 'rgba(236,72,153,0.2)'][i]
+                                } 0%, transparent 70%)`,
+                                left: `${30 * i}%`,
+                                top: `${20 * (i + 1)}%`,
+                                animationDelay: `${i * 2}s`
+                            }}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            {/* Content container */}
+            <div className="max-w-6xl mx-auto w-full relative z-10">
                 <div className={layouts[layout]}>
                     {/* Title container */}
                     <div className={`transform transition-all duration-1000 ${
                         isVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
                     } ${contentStyles.title}`}>
-                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-                            <h1 className="text-6xl font-bold mb-8 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
-                                {title}
-                            </h1>
+                        <div className="relative group">
+                            {/* Glow effect behind title */}
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 
+                                rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+                            <div className="relative bg-black/50 backdrop-blur-sm rounded-2xl p-8 ring-1 ring-white/10">
+                                <h1 className="text-6xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 
+                                    bg-clip-text text-transparent animate-gradientText">
+                                    {title}
+                                </h1>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Content container with fixed dimensions */}
+                    {/* Content container */}
                     <div className={`transform transition-all duration-1000 delay-200 ${
                         isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
                     } ${contentStyles.content}`}>
-                        <div 
-                            className="bg-white/10 backdrop-blur-sm rounded-2xl p-8"
-                            style={contentDimensions}
-                        >
-                            <p className="text-xl text-white/80 leading-relaxed">
-                                <ScrambleText text={content} progress={scrollProgress} />
-                            </p>
+                        <div className="relative group">
+                            {/* Glow effect behind content */}
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 
+                                rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                            <div className="relative bg-black/50 backdrop-blur-sm rounded-2xl p-8 ring-1 ring-white/10">
+                                <p className="text-xl leading-relaxed">
+                                    <ScrambleText 
+                                        text={content} 
+                                        progress={scrollProgress}
+                                        className="text-cyan-200/90"
+                                    />
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
