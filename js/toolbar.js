@@ -130,42 +130,56 @@ function App() {
             <Dropdown isOpen={isMenuOpen} sections={sections} />
             
             <div className="fixed top-0 left-0 right-0 flex justify-center p-4 z-30 toolbar-nav">
-                <div className="relative bg-indigo-600 rounded-full px-3 py-2 min-w-[180px]">
-                    {/* Container for buttons with proper spacing */}
-                    <div className="relative flex items-center justify-between">
+                <div className="relative bg-gray-900/90 backdrop-blur-sm border border-white/10 rounded-full px-6 py-3 
+                    shadow-lg shadow-black/20">
+                    <div className="relative flex items-center gap-8">
                         {tools.map((tool, index) => (
                             <button
                                 key={tool.id}
                                 onClick={() => scrollToSection(tool.id)}
-                                className="relative z-10 w-10 h-10 flex items-center justify-center group"
+                                className="relative z-10 flex items-center justify-center group"
                             >
-                                <span className={`text-xl font-medium transition-colors duration-300 ${
+                                {/* Button background with gradient */}
+                                <div className={`absolute inset-0 rounded-full transition-opacity duration-300 ${
                                     tool.id === currentTool 
-                                        ? 'text-indigo-900'
-                                        : 'text-white'
+                                        ? 'opacity-100' 
+                                        : 'opacity-0 group-hover:opacity-50'
+                                }`}>
+                                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20" />
+                                </div>
+
+                                {/* Button content */}
+                                <span className={`relative px-4 py-2 text-xl font-medium transition-all duration-300 ${
+                                    tool.id === currentTool 
+                                        ? 'text-white scale-110' 
+                                        : 'text-gray-400 group-hover:text-white'
                                 }`}>
                                     {tool.label[0]}
                                 </span>
-                                <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 
-                                    text-sm bg-black/80 text-white px-3 py-1 rounded-lg 
-                                    opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {tool.label}
-                                </span>
+
+                                {/* Tooltip */}
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 
+                                    opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+                                    <div className="px-3 py-1 text-sm text-white bg-gray-900/90 rounded-lg 
+                                        shadow-lg border border-white/10 whitespace-nowrap">
+                                        {tool.label}
+                                    </div>
+                                </div>
                             </button>
                         ))}
                         
-                        {/* Sliding indicator */}
+                        {/* Active indicator */}
                         <div 
-                            className="absolute top-0 left-0 w-10 h-10 bg-white rounded-full 
-                                transition-transform duration-300 ease-in-out"
+                            className="absolute bottom-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 
+                                transition-all duration-300 rounded-full"
                             style={{
-                                transform: `translateX(${tools.findIndex(t => t.id === currentTool) * 40}px)`
+                                left: `${(tools.findIndex(t => t.id === currentTool) * 100) / tools.length}%`,
+                                width: `${100 / tools.length}%`
                             }}
                         />
                     </div>
                 </div>
             </div>
-            
             <main className="overflow-hidden">
             {sections.map(section => 
     section.component ? 
